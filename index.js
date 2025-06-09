@@ -46,11 +46,9 @@ exports.handler = async (event) => {
             throw new Error('Only PDF files are allowed');
         }
 
-        // Generate unique key for S3
         const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
         const s3Key = `pdfs/${timestamp}-${fileName}`;
 
-        // Upload parameters
         const uploadParams = {
             Bucket: BUCKET_NAME,
             Key: s3Key,
@@ -63,17 +61,14 @@ exports.handler = async (event) => {
             }
         };
 
-        // Upload to S3
         const uploadResult = await s3.upload(uploadParams).promise();
 
-        // Generate pre-signed URL for download
         const downloadUrl = s3.getSignedUrl('getObject', {
             Bucket: BUCKET_NAME,
             Key: s3Key,
             Expires: 3600
         });
 
-        // Success response
         const response = {
             statusCode: 200,
             headers: {
